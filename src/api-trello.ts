@@ -13,6 +13,7 @@ import {
 const apiBaseUrl = 'https://api.trello.com/1';
 const trelloBoard = boardId();
 
+const cardPrefix: string = process.env.TRELLO_CARD_PREFIX || '';
 const apiKey: string = process.env.TRELLO_API_KEY || '';
 const apiToken: string = process.env.TRELLO_API_TOKEN || '';
 const debug: string | boolean = process.env.TRELLO_API_DEBUG || false;
@@ -182,7 +183,11 @@ function createCard(listId: string, params: TrelloCardRequestParams): Promise<Tr
   // Examples imply that one shoudl be able to pass an object to the constructor, yet
   // TS is not happy about it, so we convert the object to string first.
   const queryParams = new URLSearchParams();
-  queryParams.append('name', `[#${params.number}] ${params.title}`);
+  let prefix = ""
+  if (cardPrefix != '') {
+    prefix = `${cardPrefix}: `
+  }
+  queryParams.append('name', `[#${params.number}] ${prefix}${params.title}`);
   queryParams.append('desc', params.description || '');
   queryParams.append('pos', 'bottom');
   queryParams.append('idList', listId);
